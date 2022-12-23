@@ -19,7 +19,7 @@ String myString = "Hello";
 String mySpacer = ".......";
 
 // initialize objects (section 2)
-MyText objStr(myString); // ("Hola") <---pointer = 0 (all due to be parsed)
+MyText objStr(myString); // ("Hello") <---pointer = 0 (all due to be parsed)
 MyText objSpa(mySpacer); // ("....") <---pointer = length (all parsed)
 MyText objOut(initSpacer); // initial starting string ("................")
 
