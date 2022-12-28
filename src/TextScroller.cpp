@@ -3,14 +3,18 @@
 #include <SerialCommander.h>
 #include <TextScroller.h>
 
+#define debug 0 // 1 (true) = output debug to serial port (console), 0 (false) = no debug
+
 // initialize objects (section 1)
 LiquidCrystal_I2C lcd(0x27, 16, 2); // LCD address 0x27, 16 chars, 2 lines
 SerialCommander MyCommander;
 
 // function declarations
-void serialPrintOutput();
-void printObjOutToLCD();
 void userSerialportActivity();
+void printObjOutToLCD();
+#if debug // code only compiled and functional when compiled directive #define debug 1
+  void serialPrintOutput();
+#endif
 
 // initialize variables
 //   16-char ruler: "----------------"
@@ -34,7 +38,9 @@ void setup()
   lcd.init();
   lcd.backlight();
   Serial.println(); // line feed as a spacer
-  serialPrintOutput(); // <=== DEBUGGER =====
+  #if debug // code only compiled and functional when compiled directive #define debug 1
+    serialPrintOutput();
+  #endif
   printObjOutToLCD(); // prints initial screen to LCD
   delay(500);
 }
@@ -64,22 +70,24 @@ void loop()
       objStr.setPointer(0); // setting to 0 prompts a parsing myString<--->mySpacer flip-flop
     }
   } // ====== (ENDS) ===== myString<--->mySpacer FLIP-FLOP =====
-  serialPrintOutput(); // <=== DEBUGGER ====
+  #if debug // code only compiled and functional when compiled directive #define debug 1
+    serialPrintOutput();
+  #endif
   printObjOutToLCD();
 }
 
-void serialPrintOutput() // prints to Serial port monitor (output plus debugging values)
-{
-  // uncomment for debugging
-  // Serial.println(objOut.getText() + "_____STp: " + String(objStr.getPointer()) + "__STl: " + String(objStr.getLength()) + "_____SPp: " + String(objSpa.getPointer()) + "__SPl: " + String(objSpa.getLength()));
-  ;
-}
+#if debug // code only compiled and functional when compiled directive #define debug 1
+  void serialPrintOutput() // prints to Serial port monitor (output plus debugging values)
+  {
+    Serial.println(objOut.getText() + "_____STp: " + String(objStr.getPointer()) + "__STl: " + String(objStr.getLength()) + "_____SPp: " + String(objSpa.getPointer()) + "__SPl: " + String(objSpa.getLength()));
+  }
+#endif
 
 void printObjOutToLCD() // prints objOut text to LCD
 {
   lcd.setCursor(0,0);
   lcd.print(objOut.getText());
-  delay(700);
+  delay(400);
 }
 
 void userSerialportActivity() // adresses user Serial port activity
@@ -104,7 +112,9 @@ void userSerialportActivity() // adresses user Serial port activity
       {
         // scroll another mySpacer char
         objOut.scrollToLeft(objSpa.getParsingChar());
-        serialPrintOutput();
+        #if debug // code only compiled and functional when compiled directive #define debug 1
+          serialPrintOutput();
+        #endif
       }
       // prompts parsing the new myString
       objSpa.setPointer(objSpa.getLength());
